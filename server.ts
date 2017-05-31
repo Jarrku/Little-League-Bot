@@ -1,7 +1,9 @@
 import { Client, Guild, Message, Role, TextChannel } from "discord.js";
 import * as dotenv from "dotenv";
 dotenv.config();
-const client = new Client();
+const client = new Client({
+  disabledEvents: ["TYPING_START"],
+});
 
 process.on("SIGINT", () => {
   client.destroy();
@@ -9,8 +11,11 @@ process.on("SIGINT", () => {
 });
 
 const BOT_SECRET = process.env.NODE_ENV !== "production" ? process.env.BOT_SECRET_DEV : process.env.BOT_SECRET_PROD;
-const CHATLOG_CHANNEL = "talk_log_pogpog";
-const ROLE_ASSIGNMENT_CHANNEL = "role_assignment";
+
+const CHANNELS = {
+  CHATLOG: "talk_log_pogpog",
+  ROLE_ASSIGNMENT: "role_assignment",
+};
 
 const roles = ["silenced", "NA", "EUW", "Challenger", "Master", "Diamond 1", "Diamond 2", "Diamond 3",
   "Diamond 4", "Diamond 5", "Platinum 1- 2", "Platinum 3- 5", "Gold", "Silver", "Bronze",
@@ -64,27 +69,50 @@ const handleCommand = (message: Message) => {
   const { content, channel } = message;
   const command = content.slice(1).trim().toLowerCase();
 
+  COMMANDS[command] ? COMMANDS[command](message) : COMMANDS.default(message);
+
+
   if (command === "help") {
     const textToSend = `Check pin for help. Also here is a list of assignable roles: ${roles.join(", ")}`;
     channel.send(textToSend).catch(console.error);
   }
 };
 
+
+
+class Commands {
+  private _msg: Message;
+  constructor(msg: Message) {
+    this._msg = msg;
+  }
+
+  help() {
+    this._msg.attachments.clear();
+  }
+}
+
+const COMMANDS: { [index: string]: (msg: Message) => void } = {
+  help: handleCommand,
+  default: returnError
+}
+
 client.on("message", (msg) => {
   const { content, channel } = msg;
   const { name } = (channel as TextChannel);
+  const { CHATLOG, ROLE_ASSIGNMENT } = CHANNELS;
 
   if (name !== undefined) {
-    if (name !== CHATLOG_CHANNEL) {
+    if (name !== CHATLOG) {
       handleChatlog(msg);
     }
 
-    if (name === ROLE_ASSIGNMENT_CHANNEL) {
+    if (name === ROLE_ASSIGNMENT) {
       if (content.startsWith("+!") || content.startsWith("-!")) {
         handleRoleAssignment(msg);
       }
 
       if (content.startsWith("!")) {
+
         handleCommand(msg);
       }
     }
@@ -94,7 +122,7 @@ client.on("message", (msg) => {
 client.login(BOT_SECRET);
 
 const roleResolver = (content: string, guild: Guild) => {
-  const rolesToResolve = content.slice(2).split("|").map((rawRole) => rawRole.trim().toLowerCase());
+  const rolesToResolve = content.slice(2).split(",").map((rawRole) => rawRole.trim().toLowerCase());
 
   return rolesToResolve.reduce((prev, role) => {
     const roleToGet = rolesMap.get(role);
