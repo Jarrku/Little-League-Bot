@@ -1,0 +1,19 @@
+{
+  "name": "little_league_bot",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "Simon VDB",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "dotenv": "^4.0.0",
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.22",
+    "tslint": "^5.3.2",
+    "typescript": "^2.3.3"
+  },
+  "scripts": {
+    "start": "node --harmony-async-await server.js"
+  }
+}
