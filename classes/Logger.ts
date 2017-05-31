@@ -2,9 +2,12 @@ import { Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "di
 
 export default class Logger {
   readonly chatlogChannel = "talk_log_pogpog";
+  private excludedChannels = [this.chatlogChannel, "admin", "botpogpog", "arths_bot_test_channel"];
 
   async log(msg: Message) {
     const { createdTimestamp, cleanContent, channel, author, guild } = msg;
+
+    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) === -1) return;
 
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
@@ -19,6 +22,8 @@ export default class Logger {
     const { cleanContent: beforeCleanContent } = before;
     const { createdTimestamp, author, cleanContent, guild, channel } = after;
 
+    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) === -1) return;
+
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
 
@@ -31,6 +36,8 @@ export default class Logger {
 
   async logDelete(msg: Message) {
     const { createdTimestamp, author, cleanContent, guild, channel } = msg;
+
+    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) === -1) return;
 
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);

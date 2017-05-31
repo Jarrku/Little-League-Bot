@@ -31,7 +31,7 @@ client.on("message", (msg) => {
 
   if (name === undefined) return;
 
-  if (name !== logger.chatlogChannel) logger.log(msg);
+  logger.log(msg);
 
   if (name === role_assignment) {
     if (content.startsWith("+!") || content.startsWith("-!")) roleAssignment.handleMessage(msg);
@@ -39,15 +39,8 @@ client.on("message", (msg) => {
   }
 });
 
-client.on("messageUpdate", (before, after) => {
-  const { name } = (after.channel as TextChannel);
-  if (name !== logger.chatlogChannel) logger.logEdit(before, after);
-});
-
-client.on("messageDelete", (msg) => {
-  const { name } = (msg.channel as TextChannel);
-  if (name !== logger.chatlogChannel) logger.logDelete(msg);
-});
+client.on("messageUpdate", (before, after) => logger.logEdit(before, after));
+client.on("messageDelete", (msg) => logger.logDelete(msg));
 
 client.login(BOT_SECRET);
 
