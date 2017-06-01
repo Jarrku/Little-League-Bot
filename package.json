@@ -16,13 +16,12 @@
   },
   "scripts": {
     "transpile": "tsc --watch",
-    "start": "node server.js",
+    "start": "node build/server.js",
     "deploy": "tsc && now --public && now alias little-league-bot-prod"
   },
   "now": {
     "files": [
-      "classes/**/*.js",
-      "server.js"
+      "build"
     ],
     "env": {
       "NODE_ENV": "production",

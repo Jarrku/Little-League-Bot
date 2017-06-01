@@ -4,6 +4,7 @@
     "target": "es2017",
     "noImplicitReturns": true,
     "strict": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "outDir": "build"
   }
 }

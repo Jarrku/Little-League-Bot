@@ -1,6 +1,8 @@
 import { Client, Message, TextChannel } from "discord.js";
 import { Commander, Logger, RoleAssigner } from "./classes";
 
+import { makeEnhancedMsg } from "./Helpers";
+
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -20,14 +22,6 @@ const roleAssignment = new RoleAssigner();
 const logger = new Logger();
 const commander = new Commander();
 
-/*
-const superMessage = (msg: Message) => {
-  const createdTimestamp = () => {
-    return msg.createdTimestamp;
-  };
-  return { ...msg, createdTimestamp };
-};*/
-
 client.on("error", (e) => console.error(e));
 if (process.env.NODE_ENV !== "production") {
   client.on("warn", (e) => console.warn(e));
@@ -35,16 +29,15 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 client.on("ready", () => {
-  client.user.setPresence({
-    game: {
-      name: "!help",
-    },
-  });
+  client.user.setGame("!help");
 });
 
 client.on("message", (msg) => {
-  const { content, channel } = msg;
+  const enhancedMsg = makeEnhancedMsg(msg);
+
+  const { content, textChannel } = enhancedMsg;
   const { name } = (channel as TextChannel);
+
   const { role_assignment, prefix } = config;
 
   if (name === undefined) return;

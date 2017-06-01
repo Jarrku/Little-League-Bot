@@ -58,3 +58,6 @@ export default class Logger {
     return guild.channels.find((c) => c.name === this.chatlogChannel);
   }
 }
+
+
+const
