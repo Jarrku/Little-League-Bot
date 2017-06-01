@@ -1,4 +1,4 @@
-import { Client, TextChannel } from "discord.js";
+import { Client, Message, TextChannel } from "discord.js";
 import { Commander, Logger, RoleAssigner } from "./classes";
 
 import * as dotenv from "dotenv";
@@ -20,12 +20,27 @@ const roleAssignment = new RoleAssigner();
 const logger = new Logger();
 const commander = new Commander();
 
-client.on("error", (e) => console.error(e));
+/*
+const superMessage = (msg: Message) => {
+  const createdTimestamp = () => {
+    return msg.createdTimestamp;
+  };
+  return { ...msg, createdTimestamp };
+};*/
 
+client.on("error", (e) => console.error(e));
 if (process.env.NODE_ENV !== "production") {
   client.on("warn", (e) => console.warn(e));
   client.on("debug", (e) => console.info(e));
 }
+
+client.on("ready", () => {
+  client.user.setPresence({
+    game: {
+      name: "!help",
+    },
+  });
+});
 
 client.on("message", (msg) => {
   const { content, channel } = msg;
