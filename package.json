@@ -16,6 +16,18 @@
   },
   "scripts": {
     "transpile": "tsc --watch",
-    "start": "node --harmony-async-await server.js"
+    "start": "node server.js",
+    "deploy": "tsc && now --public && now alias little-league-bot-prod"
+  },
+  "now": {
+    "files": [
+      "classes/**/*.js",
+      "server.js"
+    ],
+    "env": {
+      "NODE_ENV": "production",
+      "BOT_SECRET_PROD": "@lll_bot_secret_prod",
+      "BOT_SECRET_DEV": "@lll_bot_secret_dev"
+    }
   }
 }

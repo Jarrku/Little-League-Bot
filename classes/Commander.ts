@@ -19,7 +19,7 @@ export default class Commander implements ICommand {
 
   private async help(msg: Message) {
     const { channel } = msg;
-    const text = `Check pin for help. Also here is a list of assignable roles:\n\`${roleList}\``;
+    const text = `Check pin for help. Also here is a list of assignable roles:\n${roleList}`;
     await (channel as TextChannel).send(text);
   }
 }

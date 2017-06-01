@@ -8,7 +8,7 @@ export default class Logger {
   async log(msg: Message) {
     const { createdTimestamp, cleanContent, channel, author, guild } = msg;
 
-    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) === -1) return;
+    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) !== -1) return;
 
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
@@ -23,7 +23,7 @@ export default class Logger {
     const { cleanContent: beforeCleanContent } = before;
     const { createdTimestamp, author, cleanContent, guild, channel } = after;
 
-    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) === -1) return;
+    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) !== -1) return;
 
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
@@ -38,7 +38,7 @@ export default class Logger {
   async logDelete(msg: Message) {
     const { createdTimestamp, author, cleanContent, guild, channel } = msg;
 
-    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) === -1) return;
+    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) !== -1) return;
 
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);

@@ -21,8 +21,12 @@ const logger = new Logger();
 const commander = new Commander();
 
 client.on("error", (e) => console.error(e));
-client.on("warn", (e) => console.warn(e));
-client.on("debug", (e) => console.info(e));
+
+if (process.env.NODE_ENV !== "production") {
+  client.on("warn", (e) => console.warn(e));
+  client.on("debug", (e) => console.info(e));
+}
+
 
 client.on("message", (msg) => {
   const { content, channel } = msg;
@@ -48,16 +52,3 @@ process.on("SIGINT", () => {
   client.destroy();
   process.exit(0);
 });
-
-/*
-const handleCommand = (message: Message) => {
-  const { content, channel } = message;
-  const command = content.slice(1).trim().toLowerCase();
-
-  COMMANDS[command] ? COMMANDS[command](message) : COMMANDS.default(message);
-
-  if (command === "help") {
-    const textToSend = `Check pin for help. Also here is a list of assignable roles: ${roles.join(", ")}`;
-    channel.send(textToSend).catch(console.error);
-  }
-};*/
