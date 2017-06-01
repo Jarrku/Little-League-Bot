@@ -2,7 +2,8 @@ import { Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "di
 
 export default class Logger {
   readonly chatlogChannel = "talk_log_pogpog";
-  private excludedChannels = [this.chatlogChannel, "admin", "botpogpog", "arths_bot_test_channel"];
+  private excludedChannels =
+  [this.chatlogChannel, "admin", "botpogpog", "arths_bot_test_channel", "moderator", "staff"];
 
   async log(msg: Message) {
     const { createdTimestamp, cleanContent, channel, author, guild } = msg;
