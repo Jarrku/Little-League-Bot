@@ -8,7 +8,7 @@ const BOT_SECRET = process.env.NODE_ENV !== "production" ? process.env.BOT_SECRE
 
 const config = {
   ownerID: "131418385610309633",
-  prefix: "+",
+  prefix: "!",
   role_assignment: "role_assignment",
 };
 
