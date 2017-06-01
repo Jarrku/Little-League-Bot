@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2015",
+    "target": "es2017",
     "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedParameters": true,
-    "noImplicitAny": true
+    "strict": true,
+    "noUnusedParameters": true
   }
 }

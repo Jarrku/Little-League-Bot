@@ -27,7 +27,6 @@ if (process.env.NODE_ENV !== "production") {
   client.on("debug", (e) => console.info(e));
 }
 
-
 client.on("message", (msg) => {
   const { content, channel } = msg;
   const { name } = (channel as TextChannel);
