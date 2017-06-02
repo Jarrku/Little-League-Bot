@@ -5,9 +5,12 @@
   "author": "Simon VDB",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.16.1",
+    "bufferutil": "^3.0.1",
     "discord.js": "^11.1.0",
+    "discord.js-commando": "^0.9.0",
     "dotenv": "^4.0.0",
-    "uws": "^0.14.5"
+    "erlpack": "hammerandchisel/erlpack"
   },
   "devDependencies": {
     "@types/node": "^7.0.22",
