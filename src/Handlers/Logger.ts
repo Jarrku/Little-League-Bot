@@ -1,14 +1,14 @@
-import { Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "discord.js";
+import { DMChannel, GroupDMChannel, Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "discord.js";
 
 export default class Logger {
-  readonly chatlogChannel = "talk_log_pogpog";
+  readonly chatlogChannel = "talk-log-pogpog";
   private excludedChannels =
-  [this.chatlogChannel, "admin", "botpogpog", "arths_bot_test_channel", "moderator", "staff"];
+  [this.chatlogChannel, "admin", "botpogpog", "arths-bot-test-channel", "moderator", "staff"];
 
-  async log(msg: Message) {
+  async new(msg: Message) {
     const { createdTimestamp, cleanContent, channel, author, guild } = msg;
 
-    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) !== -1) return;
+    if (this.isUntrackedChannel(channel)) return;
 
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
@@ -16,15 +16,14 @@ export default class Logger {
     const logMessage =
       `${time} UTC: \`SENT\` **${(channel as TextChannel).name}** ${author.username}: ${cleanContent}`;
 
-    await (logChannel as TextChannel).send(logMessage);
+    await logChannel.send(logMessage);
   }
 
-  async logEdit(before: Message, after: Message) {
+  async edit(before: Message, after: Message) {
     const { cleanContent: beforeCleanContent } = before;
     const { createdTimestamp, author, cleanContent, guild, channel } = after;
 
-    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) !== -1) return;
-
+    if (this.isUntrackedChannel(channel)) return;
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
 
@@ -32,21 +31,24 @@ export default class Logger {
     \t\`BEFORE:\` ${beforeCleanContent}
     \t\`AFTER:\` ${cleanContent}`;
 
-    await (logChannel as TextChannel).send(logMessage);
+    await logChannel.send(logMessage);
   }
 
-  async logDelete(msg: Message) {
+  async delete(msg: Message) {
     const { createdTimestamp, author, cleanContent, guild, channel } = msg;
 
-    if (this.excludedChannels.findIndex((ch) => ch === (channel as TextChannel).name) !== -1) return;
-
+    if (this.isUntrackedChannel(channel)) return;
     const logChannel = this.getLogchannel(guild);
     const time = this.formatDate(createdTimestamp);
 
     const logMessage =
       `${time} UTC: \`DELETED\` **${(channel as TextChannel).name}** ${author.username}: ${cleanContent}`;
 
-    await (logChannel as TextChannel).send(logMessage);
+    await logChannel.send(logMessage);
+  }
+
+  private isUntrackedChannel(channel: TextChannel | DMChannel | GroupDMChannel): boolean {
+    return channel instanceof TextChannel ? this.excludedChannels.findIndex((ch) => ch === channel.name) !== -1 : true;
   }
 
   private formatDate(timestamp: number): string {
@@ -54,10 +56,7 @@ export default class Logger {
     return timeString.slice(5, timeString.length - 3);
   }
 
-  private getLogchannel(guild: Guild): GuildChannel {
-    return guild.channels.find((c) => c.name === this.chatlogChannel);
+  private getLogchannel(guild: Guild): TextChannel {
+    return guild.channels.find((c) => c.name === this.chatlogChannel) as TextChannel;
   }
 }
-
-
-const

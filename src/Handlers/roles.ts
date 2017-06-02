@@ -1,0 +1,36 @@
+export default {
+  rank: [
+    "Challenger",
+    "Master",
+    "Diamond 1",
+    "Diamond 2",
+    "Diamond 3",
+    "Diamond 4",
+    "Diamond 5",
+    "Platinum 1-2",
+    "Platinum 3-5",
+    "Gold",
+    "Silver",
+    "Bronze",
+  ],
+  region: [
+    "NA",
+    "EUW",
+  ],
+  flavour: [
+    "Custom Games",
+    "CSGO",
+    "Overwatch",
+    "OSRS",
+    "Minecraft",
+    "Hearthstone",
+    "HOTS",
+    "PUBG",
+    "Workout",
+    "Sports",
+  ],
+  other: [
+    "silenced",
+    "test",
+  ],
+};

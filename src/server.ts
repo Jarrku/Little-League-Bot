@@ -1,7 +1,5 @@
 import { Client, Message, TextChannel } from "discord.js";
-import { Commander, Logger, RoleAssigner } from "./classes";
-
-import { makeEnhancedMsg } from "./Helpers";
+import { Commander, handleRoleAssignment, Logger } from "./Handlers";
 
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -11,14 +9,13 @@ const BOT_SECRET = process.env.NODE_ENV !== "production" ? process.env.BOT_SECRE
 const config = {
   ownerID: "131418385610309633",
   prefix: "!",
-  role_assignment: "role_assignment",
+  role_assignment: "role-assignment",
 };
 
 const client = new Client({
   disabledEvents: ["TYPING_START"],
 });
 
-const roleAssignment = new RoleAssigner();
 const logger = new Logger();
 const commander = new Commander();
 
@@ -29,29 +26,23 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 client.on("ready", () => {
-  client.user.setGame("!help");
+  client.user.setGame("!help in #role-assignment");
 });
 
 client.on("message", (msg) => {
-  const enhancedMsg = makeEnhancedMsg(msg);
-
-  const { content, textChannel } = enhancedMsg;
-  const { name } = (channel as TextChannel);
-
-  const { role_assignment, prefix } = config;
-
-  if (name === undefined) return;
-
-  logger.log(msg);
-
-  if (name === role_assignment) {
-    if (content.startsWith("+!") || content.startsWith("-!")) roleAssignment.handleMessage(msg);
+  // ignore DM and GroupDM for now;
+  const { content, channel } = msg;
+  if (channel instanceof TextChannel) {
+    const { role_assignment, prefix } = config;
+    logger.new(msg);
     if (content.startsWith(prefix)) commander.execute(msg);
+    if (channel.name !== role_assignment) return;
+    if (content.startsWith("+!") || content.startsWith("-!")) handleRoleAssignment(msg);
   }
 });
 
-client.on("messageUpdate", (before, after) => logger.logEdit(before, after));
-client.on("messageDelete", (msg) => logger.logDelete(msg));
+client.on("messageUpdate", (before, after) => logger.edit(before, after));
+client.on("messageDelete", (msg) => logger.delete(msg));
 
 client.login(BOT_SECRET);
 
