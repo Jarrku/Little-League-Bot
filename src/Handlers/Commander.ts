@@ -31,7 +31,7 @@ const timeoutHelper = (msg: Message, args?: string[]) => {
   if (mentionedUser) return mentionedUser;
 
   const userToLookFor = args.join("");
-  return guild.members.find((m) => `${m.user.username}#${m.user.discriminator}` === userToLookFor);
+  return guild.members.find((m) => `${m.user.tag}` === userToLookFor);
 };
 
 export default class Commander implements ICommand {
