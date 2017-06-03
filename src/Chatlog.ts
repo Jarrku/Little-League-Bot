@@ -1,6 +1,6 @@
 import { DMChannel, GroupDMChannel, Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "discord.js";
 
-export default class Logger {
+export default class Chatlog {
   readonly chatlogChannel = "talk-log-pogpog";
   private excludedChannels =
   [this.chatlogChannel, "admin", "botpogpog", "arths-bot-test-channel", "moderator", "staff"];

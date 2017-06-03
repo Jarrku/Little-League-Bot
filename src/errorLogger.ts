@@ -1,6 +1,6 @@
 import { CommandoClient, FriendlyError } from "discord.js-commando";
 
-const configureErrorLogging = (client: CommandoClient) => {
+export default (client: CommandoClient) => {
   if (process.env.NODE_ENV !== "production") {
     client
       .on("warn", console.warn)
@@ -20,5 +20,3 @@ const configureErrorLogging = (client: CommandoClient) => {
         `${msg.command.groupID}:${msg.command.memberName}` : ""} blocked; ${reason}`);
     });
 };
-
-export default configureErrorLogging;

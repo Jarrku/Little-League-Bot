@@ -1,8 +1,8 @@
 import { TextChannel } from "discord.js";
 import { Command, CommandoClient } from "discord.js-commando";
 import * as path from "path";
+import Chatlog from "./Chatlog";
 import configureErrorLogging from "./ErrorLogger";
-import { Commander, handleRoleAssignment, Logger } from "./Handlers";
 
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -22,27 +22,32 @@ const client = new CommandoClient({
 
 configureErrorLogging(client);
 
-const logger = new Logger();
-const commander = new Commander();
+const logger = new Chatlog();
 
-client.on("ready", () => {
-  client.user.setGame("!help in #role-assignment");
-});
+client
+  .on("ready", () => client.user.setGame("!help in #role-assignment"))
+  .on("message", (msg) => {
+    // ignore DM and GroupDM for now;
+    const { channel } = msg;
+    if (channel instanceof TextChannel) logger.new(msg);
+  })
+  .on("messageUpdate", logger.edit)
+  .on("messageDelete", logger.delete)
+  /*.on("guildMemberAdd", (member) => {
+    const welcomeText = "DO SMTHING ASWELL LAZY ASSES !! jk im good boi no punish";
+    member.send(welcomeText);
+  })*/;
 
-client.on("message", (msg) => {
-  // ignore DM and GroupDM for now;
-  const { content, channel } = msg;
-  if (channel instanceof TextChannel) {
-    const { role_assignment, prefix } = config;
-    logger.new(msg);
-    if (content.startsWith(prefix)) commander.execute(msg);
-    if (channel.name !== role_assignment) return;
-    if (content.startsWith("+!") || content.startsWith("-!")) handleRoleAssignment(msg);
-  }
-});
-
-client.on("messageUpdate", logger.edit);
-client.on("messageDelete", logger.delete);
+client.registry
+  .registerGroups([["ll", "Little League"], ["util", "Utilities"]])
+  .registerDefaultTypes()
+  .registerDefaultCommands({
+    prefix: false,
+    eval_: false,
+    ping: false,
+    commandState: false,
+  })
+  .registerCommandsIn(path.join(__dirname, "Commands"));
 
 client.login(BOT_SECRET);
 
