@@ -43,10 +43,6 @@ export class AddRole extends Command {
     });
   }
 
-  hasPermission(): boolean {
-    return true;
-  }
-
   async run(message: CommandMessage, { rolesToParse }: { rolesToParse: string }):
     Promise<Message | Message[]> {
 
@@ -87,10 +83,6 @@ export class RemoveRole extends Command {
       ],
       guildOnly: true,
     });
-  }
-
-  hasPermission(): boolean {
-    return true;
   }
 
   async run(message: CommandMessage, { rolesToParse }: { rolesToParse: string }):

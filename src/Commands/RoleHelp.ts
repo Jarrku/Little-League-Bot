@@ -26,10 +26,6 @@ ${roles.region.join(", ")}
 ${roles.flavour.join(", ")}`;
   }
 
-  hasPermission(): boolean {
-    // required for everything -> default to return true
-    return true;
-  }
   async run(message: CommandMessage): Promise<Message | Message[]> {
     if (message.channel instanceof TextChannel) {
       await message.author.send(this.formattedRoles);
