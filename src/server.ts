@@ -1,8 +1,8 @@
 import { TextChannel } from "discord.js";
 import { Command, CommandoClient } from "discord.js-commando";
 import * as path from "path";
-import Chatlog from "./Chatlog";
-import configureErrorLogging from "./ErrorLogger";
+import Chatlog from "./Utils/Chatlog";
+import configureErrorLogging from "./Utils/ErrorLogger";
 
 import * as dotenv from "dotenv";
 dotenv.config();
