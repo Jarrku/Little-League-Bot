@@ -24,6 +24,9 @@
     "no-console": [
       false
     ],
-    "curly": false
+    "curly": false,
+    "interface-name": [
+      false
+    ]
   }
 }
