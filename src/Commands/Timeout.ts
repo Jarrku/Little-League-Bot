@@ -3,6 +3,7 @@ import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
 
 // create 'dictionary' to save roles in
 const cache = new Map<string, string[]>();
+const notAllowedMsg = "This command is *obviously* only for Moderators or Admins, nice try :^)";
 
 const isAllowed = ({ roles }: GuildMember): boolean => {
   const memberRoles = Array.from(roles.values()).map((role: Role) => role.name.toLowerCase());
@@ -21,7 +22,7 @@ export class Timeout extends Command {
         {
           key: "naughtyMember",
           label: "User to time out",
-          prompt: "Can't time out emptiness :^)",
+          prompt: "Can't time out nothing, silly :^)",
           type: "member",
         },
       ],
@@ -30,7 +31,7 @@ export class Timeout extends Command {
   }
 
   hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member) ? true : "dis not for u bitch";
+    return isAllowed(member) ? true : notAllowedMsg;
   }
 
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
@@ -71,13 +72,13 @@ export class Timein extends Command {
       group: "ll",
       aliases: ["untimeout"],
       memberName: "timein",
-      description: "Removes all the roles of a given user and assigns silenced role.",
+      description: "Readds all the roles of a given user and removes \`silenced\` role.",
       examples: ["!timein Jarrku#4768", "!timein @Jarrku", "!untimeout Jarrku"],
       args: [
         {
           key: "naughtyMember",
           label: "User to time in",
-          prompt: "Can't time in emptiness :^)",
+          prompt: "Can't time in nothing, silly :^)",
           type: "member",
         },
       ],
@@ -86,7 +87,7 @@ export class Timein extends Command {
   }
 
   hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member) ? true : "dis not for u bitch";
+    return isAllowed(member) ? true : notAllowedMsg;
   }
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
     Promise<Message | Message[]> {
