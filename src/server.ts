@@ -29,10 +29,10 @@ client
   .on("message", (msg) => {
     // ignore DM and GroupDM for now;
     const { channel } = msg;
-    if (channel instanceof TextChannel) logger.new(msg);
+    if (channel instanceof TextChannel) logger.log(msg);
   })
-  .on("messageUpdate", logger.edit)
-  .on("messageDelete", logger.delete)
+  .on("messageUpdate", (before, after) => logger.edit(before, after))
+  .on("messageDelete", (msg) => logger.delete(msg))
   /*.on("guildMemberAdd", (member) => {
     const welcomeText = "DO SMTHING ASWELL LAZY ASSES !! jk im good boi no punish";
     member.send(welcomeText);

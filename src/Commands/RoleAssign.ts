@@ -27,6 +27,7 @@ export class AddRole extends Command {
     super(client, {
       name: "+",
       group: "ll",
+      aliases: ["add"],
       memberName: "addrole",
       description: "Adds given role(s) to a user",
       examples: ["!+ test, workout"],
@@ -42,7 +43,7 @@ export class AddRole extends Command {
     });
   }
 
-  hasPermission(): string | boolean {
+  hasPermission(): boolean {
     return true;
   }
 
@@ -62,7 +63,7 @@ export class AddRole extends Command {
       `no rolechanges to you`;
 
     await member.addRoles(rolesToAdd).catch(console.error);
-    return channel.send(textToSend);
+    return message.reply(textToSend);
   }
 }
 
@@ -72,6 +73,7 @@ export class RemoveRole extends Command {
     super(client, {
       name: "-",
       group: "ll",
+      aliases: ["rm", "remove"],
       memberName: "removerole",
       description: "Removes given role(s) to a user",
       examples: ["!- test, workout"],
@@ -87,7 +89,7 @@ export class RemoveRole extends Command {
     });
   }
 
-  hasPermission(): string | boolean {
+  hasPermission(): boolean {
     return true;
   }
 

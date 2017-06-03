@@ -5,7 +5,7 @@ export default class Chatlog {
   private excludedChannels =
   [this.chatlogChannel, "admin", "botpogpog", "arths-bot-test-channel", "moderator", "staff"];
 
-  async new(msg: Message) {
+  async log(msg: Message) {
     const { createdTimestamp, cleanContent, channel, author, guild } = msg;
 
     if (this.isUntrackedChannel(channel)) return;
