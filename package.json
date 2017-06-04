@@ -28,7 +28,8 @@
     "env": {
       "NODE_ENV": "production",
       "BOT_SECRET_PROD": "@lll_bot_secret_prod",
-      "BOT_SECRET_DEV": "@lll_bot_secret_dev"
+      "BOT_SECRET_DEV": "@lll_bot_secret_dev",
+      "RIOT_TOKEN": "@ll_riot_token"
     }
   }
 }
