@@ -47,7 +47,7 @@ export class AddRole extends Command {
       const resultingRoles = memberRoles.filter((memberR) => !toRemove.includes(memberR)).concat(toAdd);
 
       await member.setRoles(resultingRoles).catch(console.error);
-      return message.say(textToSend);
+      return message.reply(textToSend);
 
     } else {
       const textToSend = addedRolesText.length !== 0 ?
