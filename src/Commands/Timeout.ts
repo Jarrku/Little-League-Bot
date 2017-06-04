@@ -36,7 +36,7 @@ export class Timeout extends Command {
 
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
     Promise<Message | Message[]> {
-    const { channel, guild, member, author } = message;
+    const { guild, member, author } = message;
 
     if (this.client.isOwner(naughtyMember)) {
       return message.reply(`Do you think I'm going to timeout my master!? NEVER!!!`);
@@ -44,11 +44,11 @@ export class Timeout extends Command {
 
     const naughtyMemberRoles = Array.from(naughtyMember.roles.values()).map((role: Role) => role.name.toLowerCase());
     if (naughtyMemberRoles.includes("admin")) {
-      channel.send(`Who do you think you are puny moderator`);
+      message.say(`Who do you think you are puny moderator`);
       return new Promise<Message>((resolve) => {
         setTimeout(() => {
           const noun = naughtyMember.user.username === "Trafficlights" ? "mommy" : "daddy";
-          resolve(channel.send(`${naughtyMember} someone tried to be sneaky ${noun} :^)`));
+          resolve(message.say(`${naughtyMember} someone tried to be sneaky ${noun} :^)`));
         }, 5000);
       });
     }
@@ -60,7 +60,7 @@ export class Timeout extends Command {
 
     // set target users' roles to newly created array and log in channel of command message
     await naughtyMember.setRoles(timeoutRole);
-    return channel.send(`${naughtyMember.displayName} has been timed out by ${member.displayName}`);
+    return message.say(`${naughtyMember.displayName} has been timed out by ${member.displayName}`);
   }
 }
 
@@ -91,16 +91,16 @@ export class Timein extends Command {
   }
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
     Promise<Message | Message[]> {
-    const { channel, guild } = message;
+    const { guild } = message;
 
     // get old target members' roles from cache
     const userRoles = cache.get(naughtyMember.id);
 
     // check if roles could be loaded
-    if (!userRoles) return channel.send("Roles not in cache anymore, do it yourself haHAA");
+    if (!userRoles) return message.say("Roles not in cache anymore, do it yourself haHAA");
 
     // set target member's roles to previous roles
     await naughtyMember.setRoles(userRoles);
-    return channel.send(`Timing in: ${naughtyMember.displayName}`);
+    return message.say(`Timing in: ${naughtyMember.displayName}`);
   }
 }
