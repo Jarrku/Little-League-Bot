@@ -1,6 +1,6 @@
 import { Message, TextChannel } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
-import roles from "./roles";
+import roles from "../Utils/roles";
 
 export default class Rolelist extends Command {
   constructor(client: CommandoClient) {
