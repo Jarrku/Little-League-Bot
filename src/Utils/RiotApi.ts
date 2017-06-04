@@ -1,8 +1,9 @@
 import axios from "axios";
 import { LeaguePosition, RunePages, Summoner } from "./RiotInterfaces";
 
-const RIOT_TOKEN = process.env.RIOT_TOKEN;
+const runepageName = "littleleague";
 
+const RIOT_TOKEN = process.env.RIOT_TOKEN;
 const baseEndpoint = ".api.riotgames.com";
 
 export const servers = {
@@ -18,11 +19,9 @@ export const servers = {
   TR: "tr1",
   RU: "ru",
 };
-
 const serverMap = new Map<string, string>(Object.entries(servers));
 
 const riotApi = axios.create({
-  baseURL: "https://",
   headers: {
     "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
     "X-Riot-Token": RIOT_TOKEN,
@@ -30,37 +29,46 @@ const riotApi = axios.create({
 });
 
 export const fetchRank = async (server: string, summonerName: string) => {
-  // SERVER BLANK ATM get serverurl
   try {
     const prefix = serverMap.get(server);
-    if (!prefix) return;
-    const summoner = await getSummoner(prefix, summonerName);
-    return;
+    if (!prefix) return `${server} is an incorrect prefix, please try a known value:\n${Object.keys(servers).join(", ")}`;
+
+    const { id } = await getSummoner(prefix, summonerName);
+    const [runepages, leagues] = await Promise.all([getRunepages(prefix, id), getLeagues(prefix, id)]);
+
+    // name not found -> return;
+    if (runepages.pages.findIndex((p) => p.name.toLowerCase() === runepageName) === -1) return `no runepage found with name: ${runepageName}`;
+
+    // soloq not found -> return;
+    const soloq = leagues.find((league) => league.queueType === "RANKED_SOLO_5x5");
+    if (!soloq) return `couldn't find a soloqueue rank for ${summonerName}`;
+
+    // only send back relevant data
+    const { tier, rank } = soloq;
+    return { tier, rank };
   } catch (err) {
     console.log(err);
-    return;
+    return `problems fetching data for ${summonerName}, are you sure it's the correct summonername and server?`;
   }
 };
 
-const getSummoner = async (prefix: string, summonerName: string): Promise<Summoner> => {
-  return new Promise<Summoner>((resolve, reject) => {
+const getSummoner = (prefix: string, summonerName: string) => {
+  return resolveUrl<Summoner>(`https://${prefix}${baseEndpoint}/lol/summoner/v3/summoners/by-name/${summonerName}`);
+};
+
+const getRunepages = (prefix: string, summonerId: number) => {
+  return resolveUrl<RunePages>(`https://${prefix}${baseEndpoint}/lol/platform/v3/runes/by-summoner/${summonerId}`);
+};
+
+const getLeagues = (prefix: string, summonerId: number) => {
+  return resolveUrl<LeaguePosition[]>(`https://${prefix}${baseEndpoint}/lol/league/v3/positions/by-summoner/${summonerId}`);
+};
+
+function resolveUrl<T>(url: string) {
+  return new Promise<T>((resolve, reject) => {
     riotApi.request({
-      url: `${prefix}${baseEndpoint}/lol/summoner/v3/summoners/by-name/${summonerName}`,
+      url,
     }).then(({ data }) => resolve(data))
       .catch((err) => reject(err));
   });
-};
-
-/** https://{ENDPOINT}/lol/league/v3/positions/by-summoner/{summonerID}
- *
- * headers:
- * "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
- *  "X-Riot-Token": "RGAPI-e55f7dcc-0e9a-47e6-acfd-8cd0b6cff0ee",
- *  return: LeaguePosition[]
- *
- * /lol/platform/v3/runes/by-summoner/{summonerId}
- * returns: RunePages
- *
- *  /lol/summoner/v3/summoners/by-name/{summonerName}
- * returns Summoner
- */
+}
