@@ -27,6 +27,9 @@
     "curly": false,
     "interface-name": [
       false
+    ],
+    "max-line-length": [
+      160
     ]
   }
 }
