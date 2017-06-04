@@ -3,7 +3,7 @@ import { Argument, Command, CommandMessage, CommandoClient } from "discord.js-co
 import { addRoles, removeRoles } from "../Utils/RoleMutations";
 
 const roleAssignmentChannel = "role-assignment";
-const wrongChannelError = "Role commands only work in #role_assignment to keep the other chats clean, sorry!";
+const wrongChannelError = "Role commands only work in #role-assignment to keep the other chats clean, sorry!";
 
 export class AddRole extends Command {
   constructor(client: CommandoClient) {

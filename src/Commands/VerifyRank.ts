@@ -1,7 +1,11 @@
-import { GuildMember, Message, Role, User } from "discord.js";
+import { GuildMember, Message, Role, TextChannel, User } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
-import { fetchRank } from "../Utils/RiotApi";
+import { fetchRank, servers } from "../Utils/RiotApi";
 import { addRoles } from "../Utils/RoleMutations";
+
+// TODO abstact role assing u
+const roleAssignmentChannel = "role-assignment";
+const wrongChannelError = "Role/verify commands only work in #role-assignment to keep the other chats clean, sorry!";
 
 const toUpperCase = (value: string): string => value.toUpperCase();
 
@@ -11,8 +15,8 @@ export class VerifyRank extends Command {
       name: "verify",
       group: "ll",
       memberName: "verify",
-      description: "Verifies your Soloq rank to get the appriopiate tag on the server and \`Verified\` tag. Make sure one of your runepages is named \`littleleague\`!!",
-      details: "",
+      description: `Verifies your Soloq rank to get the appriopiate tag on the server and \`Verified\` tag.`,
+      details: `Make sure one of your runepages is named \`littleleague\`!\nAvailable regions are: ${Object.keys(servers).join(", ")}`,
       examples: ["!verify euw Jarrku", "!verify na Dyrus"],
       args: [
         {
@@ -35,6 +39,9 @@ export class VerifyRank extends Command {
 
   async run(message: CommandMessage, { server, username }: { server: string, username: string }):
     Promise<Message | Message[]> {
+    if ((message.channel as TextChannel).name !== roleAssignmentChannel)
+      return message.author.send(wrongChannelError);
+
     const result = await fetchRank(server, username);
     // if string got returned = error -> return error msg
     const { guild, member } = message;
