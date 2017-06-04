@@ -84,8 +84,9 @@ export class VerifyRank extends Command {
     const { toAdd, toRemove } = rolechanges;
 
     if (toRemove.length !== 0) {
-      const newMember = await member.removeRoles(toRemove);
-      await newMember.addRoles(toAdd).catch(console.error);
+      const memberRoles = Array.from(member.roles.values());
+      const resultingRoles = memberRoles.filter((memberR) => !toRemove.includes(memberR)).concat(toAdd);
+      await member.setRoles(resultingRoles).catch(console.error);
     } else {
       await member.addRoles(toAdd).catch(console.error);
     }

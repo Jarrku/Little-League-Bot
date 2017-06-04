@@ -43,14 +43,16 @@ export class AddRole extends Command {
     if (addedRolesText.length !== 0 && removedRolesText.length !== 0) {
       const textToSend = `role(s) added to you: \`${addedRolesText}\`\nRole(s) removed from you: \`${removedRolesText}\``;
 
-      const newMember = await member.removeRoles(toRemove);
-      await newMember.addRoles(toAdd);
-      return message.reply(textToSend);
+      const memberRoles = Array.from(member.roles.values());
+      const resultingRoles = memberRoles.filter((memberR) => !toRemove.includes(memberR)).concat(toAdd);
+
+      await member.setRoles(resultingRoles).catch(console.error);
+      return message.say(textToSend);
+
     } else {
       const textToSend = addedRolesText.length !== 0 ?
         `role(s) added to you: \`${addedRolesText}\`` :
         `no rolechanges to you`;
-
       await member.addRoles(toAdd).catch(console.error);
       return message.reply(textToSend);
     }
