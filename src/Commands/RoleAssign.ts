@@ -87,7 +87,7 @@ export class RemoveRole extends Command {
       return message.author.send(wrongChannelError);
 
     const { guild, member } = message;
-    const response = addRoles(guild, member, rolesToParse);
+    const response = removeRoles(guild, member, rolesToParse);
 
     if (typeof response === "string") return message.reply(response);
     const { toRemove } = response;
