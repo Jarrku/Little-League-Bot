@@ -9,9 +9,10 @@ dotenv.config();
 
 const BOT_SECRET = process.env.NODE_ENV !== "production" ? process.env.BOT_SECRET_DEV : process.env.BOT_SECRET_PROD;
 
-const config = {
-  role_assignment: "role-assignment",
-};
+const welcomeText =
+  `Welcome to Little League!
+Please read the rules in  #welcome and get yourself some roles in #role-assignment.
+We hope you enjoy your stay!`;
 
 const client = new CommandoClient({
   disabledEvents: ["TYPING_START"],
@@ -21,7 +22,6 @@ const client = new CommandoClient({
 });
 
 configureErrorLogging(client);
-
 const logger = new Chatlog();
 
 client
@@ -29,10 +29,7 @@ client
   .on("message", logger.log)
   .on("messageUpdate", logger.edit)
   .on("messageDelete", logger.delete)
-  /*.on("guildMemberAdd", (member) => {
-    const welcomeText = "DO SMTHING ASWELL LAZY ASSES !! jk im good boi no punish";
-    member.send(welcomeText);
-  })*/;
+  .on("guildMemberAdd", (member) => member.send(welcomeText));
 
 client.registry
   .registerGroups([["ll", "Little League"], ["util", "Utilities"]])
