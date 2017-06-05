@@ -1,13 +1,13 @@
 import { GuildMember, Message, Role, User } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
+import { staff, staffOnlyMsg, timeoutRoleName } from "../config";
 
 // create 'dictionary' to save roles in
 const cache = new Map<string, string[]>();
-const notAllowedMsg = "This command is *obviously* only for Moderators or Admins, nice try :^)";
 
 const isAllowed = ({ roles }: GuildMember): boolean => {
   const memberRoles = Array.from(roles.values()).map((role: Role) => role.name.toLowerCase());
-  return memberRoles.includes("admin") || memberRoles.includes("moderator");
+  return staff.some((staffRole) => memberRoles.includes(staffRole));
 };
 
 export class Timeout extends Command {
@@ -16,7 +16,7 @@ export class Timeout extends Command {
       name: "timeout",
       group: "ll",
       memberName: "timeout",
-      description: "Removes all the roles of a given user and assigns silenced role.",
+      description: "Removes all the roles of a given user and assigns \`silenced\` role.",
       examples: ["!timeout Jarrku#4768", "!timeout @Jarrku", "!timeout Jarrku"],
       args: [
         {
@@ -31,7 +31,7 @@ export class Timeout extends Command {
   }
 
   hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member) ? true : notAllowedMsg;
+    return isAllowed(member) ? true : staffOnlyMsg;
   }
 
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
@@ -56,7 +56,7 @@ export class Timeout extends Command {
     cache.set(naughtyMember.id, Array.from(naughtyMember.roles.keys()));
     // create new array for new roles and add 'silenced' role to newly created array
     const timeoutRole = new Array<string>();
-    timeoutRole.push(guild.roles.find((role) => role.name.toLowerCase() === "silenced").id);
+    timeoutRole.push(guild.roles.find((role) => role.name.toLowerCase() === timeoutRoleName).id);
 
     // set target users' roles to newly created array and log in channel of command message
     await naughtyMember.setRoles(timeoutRole);
@@ -87,7 +87,7 @@ export class Timein extends Command {
   }
 
   hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member) ? true : notAllowedMsg;
+    return isAllowed(member) ? true : staffOnlyMsg;
   }
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
     Promise<Message | Message[]> {

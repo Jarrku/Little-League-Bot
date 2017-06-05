@@ -1,7 +1,5 @@
 import axios from "axios";
-import { LeaguePosition, RunePages, Summoner } from "./RiotInterfaces";
-
-const runepageName = "littleleague";
+import { LeaguePosition, RunePages, Summoner } from "../Interfaces/Riot";
 
 const RIOT_TOKEN = process.env.RIOT_TOKEN;
 const baseEndpoint = ".api.riotgames.com";
@@ -28,7 +26,7 @@ const riotApi = axios.create({
   },
 });
 
-export const fetchRank = async (server: string, summonerName: string) => {
+export const fetchRank = async (server: string, summonerName: string, runepageName: string) => {
   try {
     const prefix = serverMap.get(server);
     if (!prefix) return `${server} is an incorrect prefix, please try a known value:\n${Object.keys(servers).join(", ")}`;

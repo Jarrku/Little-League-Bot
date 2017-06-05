@@ -1,11 +1,11 @@
 import { GuildMember, Message, Role, TextChannel, User } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
+import { notInRoleAssignmentError, roleAssignmentChannel } from "../config";
 import { fetchRank, servers } from "../Utils/RiotApi";
 import { addRoles } from "../Utils/RoleMutations";
 
-// TODO abstact role assing u
-const roleAssignmentChannel = "role-assignment";
-const wrongChannelError = "Role/verify commands only work in #role-assignment to keep the other chats clean, sorry!";
+// runepage to check on;
+const runepageName = "littleleague";
 
 const toUpperCase = (value: string): string => value.toUpperCase();
 
@@ -15,7 +15,7 @@ export class VerifyRank extends Command {
       name: "verify",
       group: "ll",
       memberName: "verify",
-      description: `Verifies your Soloq rank to get the appriopiate tag on the server and \`Verified\` tag.`,
+      description: `Verifies your Soloq rank to get the appropriate tag on the server and \`Verified\` tag.`,
       details: `Make sure one of your runepages is named \`littleleague\`!\nAvailable regions are: ${Object.keys(servers).join(", ")}`,
       examples: ["!verify euw Jarrku", "!verify na Dyrus"],
       args: [
@@ -40,12 +40,12 @@ export class VerifyRank extends Command {
   async run(message: CommandMessage, { server, username }: { server: string, username: string }):
     Promise<Message | Message[]> {
     if ((message.channel as TextChannel).name !== roleAssignmentChannel)
-      return message.author.send(wrongChannelError);
+      return message.author.send(notInRoleAssignmentError);
 
-    const result = await fetchRank(server, username);
-    // if string got returned = error -> return error msg
+    const result = await fetchRank(server, username, runepageName);
     const { guild, member } = message;
 
+    // if string got returned = error -> return error msg
     if (typeof result === "string") return message.say(`:x:${member}, ${result}`);
     const { rank, tier } = result;
 
@@ -79,7 +79,7 @@ export class VerifyRank extends Command {
     roleString += `, ${server}`;
 
     const rolechanges = addRoles(guild, member, roleString, true);
-    if (typeof rolechanges === "string") return message.say("This shouldnt happen, please contact Jarrku");
+    if (typeof rolechanges === "string") return message.say(`This shouldnt happen :(, MASTERRRRR ${this.client.owners[0]}`);
 
     const { toAdd, toRemove } = rolechanges;
 

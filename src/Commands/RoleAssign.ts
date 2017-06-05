@@ -1,9 +1,9 @@
 import { Guild, GuildMember, Message, Role, TextChannel, User } from "discord.js";
 import { Argument, Command, CommandMessage, CommandoClient } from "discord.js-commando";
+import { notInRoleAssignmentError, roleAssignmentChannel } from "../config";
 import { addRoles, removeRoles } from "../Utils/RoleMutations";
 
-const roleAssignmentChannel = "role-assignment";
-const wrongChannelError = "Role commands only work in #role-assignment to keep the other chats clean, sorry!";
+const noRoleChangeText = "no rolechanges to you.";
 
 export class AddRole extends Command {
   constructor(client: CommandoClient) {
@@ -29,7 +29,7 @@ export class AddRole extends Command {
   async run(message: CommandMessage, { rolesToParse }: { rolesToParse: string }):
     Promise<Message | Message[]> {
     if ((message.channel as TextChannel).name !== roleAssignmentChannel)
-      return message.author.send(wrongChannelError);
+      return message.author.send(notInRoleAssignmentError);
 
     const { guild, member } = message;
     const response = addRoles(guild, member, rolesToParse);
@@ -51,8 +51,7 @@ export class AddRole extends Command {
 
     } else {
       const textToSend = addedRolesText.length !== 0 ?
-        `role(s) added to you: \`${addedRolesText}\`` :
-        `no rolechanges to you`;
+        `role(s) added to you: \`${addedRolesText}\`` : noRoleChangeText;
       await member.addRoles(toAdd).catch(console.error);
       return message.reply(textToSend);
     }
@@ -84,7 +83,7 @@ export class RemoveRole extends Command {
   async run(message: CommandMessage, { rolesToParse }: { rolesToParse: string }):
     Promise<Message | Message[]> {
     if ((message.channel as TextChannel).name !== roleAssignmentChannel)
-      return message.author.send(wrongChannelError);
+      return message.author.send(notInRoleAssignmentError);
 
     const { guild, member } = message;
     const response = removeRoles(guild, member, rolesToParse);
@@ -94,8 +93,7 @@ export class RemoveRole extends Command {
     const removedRolesText = toRemove.map((r) => r.name).join(" | ");
 
     const textToSend = removedRolesText.length !== 0 ?
-      `role(s) removed from you: \`${removedRolesText}\`` :
-      `no rolechanges to you`;
+      `role(s) removed from you: \`${removedRolesText}\`` : noRoleChangeText;
 
     await member.removeRoles(toRemove).catch(console.error);
     return message.reply(textToSend);

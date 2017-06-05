@@ -1,6 +1,6 @@
 import { Message, TextChannel } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
-import roles from "../Utils/roles";
+import roles from "../rolesData";
 
 export default class Rolelist extends Command {
   constructor(client: CommandoClient) {
@@ -31,7 +31,6 @@ ${roles.flavour.join(", ")}`;
       await message.author.send(this.formattedRoles);
       return message.reply(`Sent you a DM with information.`);
     }
-
     return message.reply(this.formattedRoles);
   }
 }

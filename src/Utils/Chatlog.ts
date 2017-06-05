@@ -1,10 +1,8 @@
 import { DMChannel, GroupDMChannel, Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "discord.js";
 
-export default class Chatlog {
-  readonly chatlogChannel = "talk-log-pogpog";
-  private excludedChannels =
-  [this.chatlogChannel, "admin", "botpogpog", "arths-bot-test-channel", "moderator", "staff"];
+import { chatlogChannel, excludedLogChannels } from "../config";
 
+export default class Chatlog {
   log = async (msg: Message) => {
     const { createdTimestamp, cleanContent, channel, author, guild } = msg;
 
@@ -48,7 +46,7 @@ export default class Chatlog {
   }
 
   private isUntrackedChannel = (channel: TextChannel | DMChannel | GroupDMChannel): boolean => {
-    return channel instanceof TextChannel ? this.excludedChannels.findIndex((ch) => ch === channel.name) !== -1 : true;
+    return channel instanceof TextChannel ? excludedLogChannels.findIndex((ch) => ch === channel.name) !== -1 : true;
   }
 
   private formatDate = (timestamp: number): string => {
@@ -57,6 +55,6 @@ export default class Chatlog {
   }
 
   private getLogchannel = (guild: Guild): TextChannel => {
-    return guild.channels.find((c) => c.name === this.chatlogChannel) as TextChannel;
+    return guild.channels.find((c) => c.name === chatlogChannel) as TextChannel;
   }
 }

@@ -1,11 +1,10 @@
 // add and remove, gives back toremove and toadd roles, to be called respectively
 // Receives string of roles to add/remove ?
 import { Guild, GuildMember, Message, Role, TextChannel, User } from "discord.js";
-import rolesData from "./roles";
+import { verifiedRoleName } from "../config";
+import rolesData from "../rolesData";
 
 export const roles = Object.values(rolesData).reduce((res, roleArray) => res.concat(roleArray), new Array<string>());
-
-const verifiedName = "Verified";
 
 interface RoleRemove {
   toRemove: Role[];
@@ -28,7 +27,7 @@ export const addRoles = (guild: Guild, member: GuildMember, rolesToParse: string
   if (newRankRole) {
     const oldRankRole = memberRoles.filter(rankRoleFinder);
     if (oldRankRole) toRemove.push(...oldRankRole);
-    const oldVerified = memberRoles.find((r) => r.name === verifiedName);
+    const oldVerified = memberRoles.find((r) => r.name === verifiedRoleName);
     if (oldVerified) toRemove.push(oldVerified);
   }
   const toAdd = rolesToAdd;
@@ -57,7 +56,7 @@ export const removeRoles = (guild: Guild, member: GuildMember, rolesToParse: str
   const toRemove = rolesFound.filter((r) => memberRoles.some((memberRole) => memberRole.id === r.id));
   const rankRoleRemove = toRemove.find(rankRoleFinder);
   if (rankRoleRemove) {
-    const oldVerified = memberRoles.find((r) => r.name === verifiedName);
+    const oldVerified = memberRoles.find((r) => r.name === verifiedRoleName);
     if (oldVerified) toRemove.push(oldVerified);
   }
 
@@ -101,5 +100,5 @@ const rankedRolesCheck = (rolesArray: string[]): boolean => {
 };
 
 const getVerified = ({ roles: guildroles }: Guild) => {
-  return guildroles.find((r) => r.name === verifiedName);
+  return guildroles.find((r) => r.name === verifiedRoleName);
 };
