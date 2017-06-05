@@ -7,8 +7,8 @@
   "dependencies": {
     "axios": "^0.16.1",
     "bufferutil": "^3.0.1",
-    "discord.js": "https://github.com/hydrabolt/discord.js.git",
-    "discord.js-commando": "https://github.com/Gawdl3y/discord.js-commando.git",
+    "discord.js": "https://github.com/Jarrku/discord.js.git",
+    "discord.js-commando": "https://github.com/Jarrku/discord.js-commando.git",
     "dotenv": "^4.0.0"
   },
   "devDependencies": {
