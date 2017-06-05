@@ -1,5 +1,6 @@
 import { TextChannel } from "discord.js";
 import { Command, CommandoClient } from "discord.js-commando";
+import { createServer } from "http";
 import * as path from "path";
 import Chatlog from "./Utils/Chatlog";
 import configureErrorLogging from "./Utils/ErrorLogger";
@@ -44,6 +45,9 @@ client.registry
 
 client.login(BOT_SECRET);
 
+if (process.env.NODE_ENV === "production") {
+  createServer().listen(3000);
+}
 // close websocket before exiting process
 process.on("SIGINT", () => {
   client.destroy();
