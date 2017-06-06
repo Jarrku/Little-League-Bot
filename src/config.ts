@@ -9,3 +9,4 @@ export const staff = ["admin", "moderator"];
 export const staffOnlyMsg = "This command is *obviously* only for Moderators or Admins, nice try :^)";
 
 export const timeoutRoleName = "silenced";
+export const modlogChannel = "mod-logs";

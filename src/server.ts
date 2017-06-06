@@ -33,7 +33,7 @@ client
   .on("guildMemberAdd", (member) => member.send(welcomeText));
 
 client.registry
-  .registerGroups([["ll", "Little League"], ["util", "Utilities"]])
+  .registerGroups([["ll", "Little League"], ["ll-mod", "Little League Mod Stuff"], ["util", "Utilities"]])
   .registerDefaultTypes()
   .registerDefaultCommands({
     prefix: false,
