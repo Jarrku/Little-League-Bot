@@ -12,7 +12,8 @@ export class AddRole extends Command {
       group: "ll",
       aliases: ["add"],
       memberName: "addrole",
-      description: "Adds given role(s) to a user",
+      description: "Adds given role(s) to a user, NOTE THE SPACE AFTER + :)",
+      details: "Space after + has to be added, afterwards you're just limited to separating the roles with \`,\`. Spaces and casing don't matter.",
       examples: ["!+ test, workout"],
       args: [
         {
@@ -66,7 +67,8 @@ export class RemoveRole extends Command {
       group: "ll",
       aliases: ["rm", "remove"],
       memberName: "removerole",
-      description: "Removes given role(s) to a user",
+      description: "Removes given role(s) to a user, NOTE THE SPACE AFTER - :)",
+      details: "Space after - has to be added, afterwards you're just limited to separating the roles with \`,\`. Spaces and casing don't matter",
       examples: ["!- test, workout"],
       args: [
         {
