@@ -21,8 +21,8 @@ export class Ban extends Command {
         },
         {
           key: "reason",
-          label: "Reason of the timeout",
-          prompt: "What's the reason for the time out?",
+          label: "Reason of the ban",
+          prompt: "What's the reason of the ban??",
           type: "string",
         },
       ],
@@ -76,8 +76,8 @@ export class Permaban extends Command {
         },
         {
           key: "reason",
-          label: "Reason of the timeout",
-          prompt: "What's the reason for the time out?",
+          label: "Reason of the permaban",
+          prompt: "What's the reason of the permaban?",
           type: "string",
         },
       ],
