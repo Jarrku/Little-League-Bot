@@ -18,6 +18,7 @@ export default {
     "EUW",
   ],
   flavour: [
+    "NLFG",
     "Custom Games",
     "CSGO",
     "Overwatch",
