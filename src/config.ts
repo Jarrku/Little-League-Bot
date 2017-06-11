@@ -1,12 +1,35 @@
-export const verifiedRoleName = "Verified";
-export const chatlogChannel = "talk-log-pogpog";
-export const excludedLogChannels = [chatlogChannel, "admin", "botpogpog", "arths-bot-test-channel", "moderator", "staff"];
+import littleleagueConfig from "./Config/Littleleague";
+import plazaConfig from "./Config/Plaza";
 
-export const roleAssignmentChannel = "role-assignment";
-export const notInRoleAssignmentError = "Role/verify commands only work in #role-assignment to keep the other chats clean, sorry!";
+export interface AssignableRoles {
+  rank: string[];
+  region: string[];
+  flavour: string[];
+  other: string[];
+}
 
-export const staff = ["admin", "moderator"];
-export const staffOnlyMsg = "This command is *obviously* only for Moderators or Admins, nice try :^)";
+export interface ConfigOptions {
+  verifiedRoleName: string;
+  chatlogChannel: string;
+  excludedLogChannels: string[];
+  roleAssignmentChannel: string;
+  notInRoleAssignmentError: string;
+  staff: string[];
+  staffOnlyMsg: string;
+  timeoutRoleName: string;
+  modlogChannel: string;
+  assignableRoles: AssignableRoles;
+  rolehelpText: string;
+  getRolestring: (tier: string, server: string, rank?: string) => string;
+  welcomeText: string;
+}
 
-export const timeoutRoleName = "silenced";
-export const modlogChannel = "mod-logs";
+const littleleagueID = "314417120568147968";
+const plazaID = "182235073171554304";
+
+const getConfig = (id: string): ConfigOptions => {
+  if (id === littleleagueID) return littleleagueConfig;
+  return plazaConfig;
+};
+
+export default getConfig;

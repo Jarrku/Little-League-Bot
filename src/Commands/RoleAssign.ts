@@ -1,6 +1,6 @@
 import { Guild, GuildMember, Message, Role, TextChannel, User } from "discord.js";
 import { Argument, Command, CommandMessage, CommandoClient } from "discord.js-commando";
-import { notInRoleAssignmentError, roleAssignmentChannel } from "../config";
+import getConfig from "../config";
 import { addRoles, removeRoles } from "../Utils/RoleMutations";
 
 const noRoleChangeText = "no rolechanges to you.";
@@ -9,12 +9,12 @@ export class AddRole extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "+",
-      group: "ll",
+      group: "common",
       aliases: ["add"],
       memberName: "addrole",
       description: "Adds given role(s) to a user, NOTE THE SPACE AFTER + :)",
       details: "Space after + has to be added, afterwards you're just limited to separating the roles with \`,\`. Spaces and casing don't matter.",
-      examples: ["!+ test, workout"],
+      examples: ["!+ NLFG, Gold"],
       args: [
         {
           key: "rolesToParse",
@@ -29,6 +29,7 @@ export class AddRole extends Command {
 
   async run(message: CommandMessage, { rolesToParse }: { rolesToParse: string }):
     Promise<Message | Message[]> {
+    const { roleAssignmentChannel, notInRoleAssignmentError } = getConfig(message.guild.id);
     if ((message.channel as TextChannel).name !== roleAssignmentChannel)
       return message.author.send(notInRoleAssignmentError);
 
@@ -64,12 +65,12 @@ export class RemoveRole extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "-",
-      group: "ll",
+      group: "common",
       aliases: ["rm", "remove"],
       memberName: "removerole",
       description: "Removes given role(s) to a user, NOTE THE SPACE AFTER - :)",
       details: "Space after - has to be added, afterwards you're just limited to separating the roles with \`,\`. Spaces and casing don't matter",
-      examples: ["!- test, workout"],
+      examples: ["!- NPVS, Gold"],
       args: [
         {
           key: "rolesToParse",
@@ -84,6 +85,8 @@ export class RemoveRole extends Command {
 
   async run(message: CommandMessage, { rolesToParse }: { rolesToParse: string }):
     Promise<Message | Message[]> {
+    const { roleAssignmentChannel, notInRoleAssignmentError } = getConfig(message.guild.id);
+
     if ((message.channel as TextChannel).name !== roleAssignmentChannel)
       return message.author.send(notInRoleAssignmentError);
 

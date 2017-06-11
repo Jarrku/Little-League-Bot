@@ -1,6 +1,5 @@
 import { DMChannel, GroupDMChannel, Guild, GuildChannel, GuildMember, Message, Role, TextChannel } from "discord.js";
-
-import { chatlogChannel, excludedLogChannels } from "../config";
+import getConfig from "../config";
 
 export default class Chatlog {
   log = async (msg: Message) => {
@@ -46,7 +45,11 @@ export default class Chatlog {
   }
 
   private isUntrackedChannel = (channel: TextChannel | DMChannel | GroupDMChannel): boolean => {
-    return channel instanceof TextChannel ? excludedLogChannels.findIndex((ch) => ch === channel.name) !== -1 : true;
+    if (channel instanceof TextChannel) {
+      const { excludedLogChannels } = getConfig(channel.guild.id);
+      return excludedLogChannels.findIndex((ch) => ch === channel.name) !== -1;
+    }
+    return true;
   }
 
   private formatDate = (timestamp: number): string => {
@@ -55,6 +58,7 @@ export default class Chatlog {
   }
 
   private getLogchannel = (guild: Guild): TextChannel => {
+    const { chatlogChannel } = getConfig(guild.id);
     return guild.channels.find((c) => c.name === chatlogChannel) as TextChannel;
   }
 }

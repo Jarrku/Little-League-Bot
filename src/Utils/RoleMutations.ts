@@ -1,10 +1,5 @@
-// add and remove, gives back toremove and toadd roles, to be called respectively
-// Receives string of roles to add/remove ?
 import { Guild, GuildMember, Message, Role, TextChannel, User } from "discord.js";
-import { verifiedRoleName } from "../config";
-import rolesData from "../rolesData";
-
-export const roles = Object.values(rolesData).reduce((res, roleArray) => res.concat(roleArray), new Array<string>());
+import getConfig from "../config";
 
 interface RoleRemove {
   toRemove: Role[];
@@ -15,18 +10,20 @@ interface RoleAdd extends RoleRemove {
 }
 
 export const addRoles = (guild: Guild, member: GuildMember, rolesToParse: string, verified = false): RoleAdd | string => {
+  const { verifiedRoleName, assignableRoles: { rank } } = getConfig(guild.id);
+
   const parsedRoles = roleParser(rolesToParse);
-  if (!rankedRolesCheck(parsedRoles)) return "More than one ranked roles specified, only one is allowed!";
+  if (!rankedRolesCheck(parsedRoles, rank)) return "More than one ranked roles specified, only one is allowed!";
   const rolesFound = resolveRoles(parsedRoles, guild);
   const memberRoles = Array.from(member.roles.values());
 
   const rolesToAdd = rolesFound.filter((r) => !memberRoles.some((memberRole) => memberRole.id === r.id));
 
   const toRemove = new Array<Role>();
-  const newRankRole = rolesToAdd.find(rankRoleFinder);
+  const newRankRole = rankRoleFinder(rolesToAdd, rank);
   if (newRankRole) {
-    const oldRankRole = memberRoles.filter(rankRoleFinder);
-    if (oldRankRole) toRemove.push(...oldRankRole);
+    const oldRankRole = rankRoleFinder(memberRoles, rank);
+    if (oldRankRole) toRemove.push(oldRankRole);
     const oldVerified = memberRoles.find((r) => r.name === verifiedRoleName);
     if (oldVerified) toRemove.push(oldVerified);
   }
@@ -49,12 +46,14 @@ export const addRoles = (guild: Guild, member: GuildMember, rolesToParse: string
 };
 
 export const removeRoles = (guild: Guild, member: GuildMember, rolesToParse: string): RoleRemove => {
+  const { verifiedRoleName, assignableRoles: { rank } } = getConfig(guild.id);
+
   const parsedRoles = roleParser(rolesToParse);
   const rolesFound = resolveRoles(parsedRoles, guild);
   const memberRoles = Array.from(member.roles.values());
 
   const toRemove = rolesFound.filter((r) => memberRoles.some((memberRole) => memberRole.id === r.id));
-  const rankRoleRemove = toRemove.find(rankRoleFinder);
+  const rankRoleRemove = rankRoleFinder(toRemove, rank);
   if (rankRoleRemove) {
     const oldVerified = memberRoles.find((r) => r.name === verifiedRoleName);
     if (oldVerified) toRemove.push(oldVerified);
@@ -70,11 +69,16 @@ export const removeRoles = (guild: Guild, member: GuildMember, rolesToParse: str
    */
 };
 
-const rankRoleFinder = (r: Role) => rolesData.rank.includes(r.name);
+const rankRoleFinder = (roles: Role[], rank: string[]) => {
+  return roles.find((r) => rank.includes(r.name));
+};
 
 const resolveRoles = (rolesToFind: string[], guild: Guild): Role[] => {
+  const { assignableRoles } = getConfig(guild.id);
+  const roles = Object.values(assignableRoles).reduce((res: string[], roleArray) => res.concat(roleArray), new Array<string>());
+
   return rolesToFind.reduce((rolesFound, role) => {
-    const roleToGet = roles.find((r) => r.toLowerCase() === role);
+    const roleToGet = roles.find((r: string) => r.toLowerCase() === role);
     if (roleToGet !== undefined) rolesFound.push(guild.roles.find((r) => r.name === roleToGet));
     return rolesFound;
   }, new Array<Role>());
@@ -86,8 +90,10 @@ const roleParser = (rolesToParse: string) => {
   return parsedRoles.filter((item) => seen.hasOwnProperty(item) ? false : (seen[item] = true));
 };
 
-const lowerRankRoles = rolesData.rank.map((r) => r.toLowerCase());
-const rankedRolesCheck = (rolesArray: string[]): boolean => {
+// const lowerRankRoles = rolesData.rank.map((r) => r.toLowerCase());
+const rankedRolesCheck = (rolesArray: string[], rank: string[]): boolean => {
+  const lowerRankRoles = rank.map((r) => r.toLowerCase());
+
   let numberOfRankedRoles = 0;
   rolesArray.forEach((r) => {
     // Once 2 have been found skip through rest of the array;
@@ -99,6 +105,7 @@ const rankedRolesCheck = (rolesArray: string[]): boolean => {
   return numberOfRankedRoles < 2;
 };
 
-const getVerified = ({ roles: guildroles }: Guild) => {
+const getVerified = ({ roles: guildroles, id }: Guild) => {
+  const { verifiedRoleName } = getConfig(id);
   return guildroles.find((r) => r.name === verifiedRoleName);
 };

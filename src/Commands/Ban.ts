@@ -1,14 +1,14 @@
 import { GuildMember, Message } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
 import { adminCheck, getModlogChannel, isAllowed } from "../Common";
-import { staffOnlyMsg } from "../config";
+import getConfig from "../config";
 import Case from "../Utils/Case";
 
 export class Ban extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "ban",
-      group: "ll-mod",
+      group: "mod",
       memberName: "ban",
       description: "Bans a given user from the server.",
       examples: ["!ban Jarrku#4768 <reason>", "!ban @Jarrku <reason>", "!ban Jarrku <reason>"],
@@ -30,8 +30,9 @@ export class Ban extends Command {
     });
   }
 
-  hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member.roles) ? true : staffOnlyMsg;
+  hasPermission({ member: { roles }, guild: { id } }: CommandMessage): boolean | string {
+    const { staffOnlyMsg } = getConfig(id);
+    return isAllowed(roles, id) ? true : staffOnlyMsg;
   }
 
   async run(message: CommandMessage, { naughtyMember, reason }: { naughtyMember: GuildMember, reason: string }):
@@ -62,7 +63,7 @@ export class Permaban extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "permaban",
-      group: "ll-mod",
+      group: "mod",
       aliases: ["perma"],
       memberName: "permaban",
       description: "Permabans a given user from the server and deletes their messages from the last 48 hours.",
@@ -85,8 +86,9 @@ export class Permaban extends Command {
     });
   }
 
-  hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member.roles) ? true : staffOnlyMsg;
+  hasPermission({ member: { roles }, guild: { id } }: CommandMessage): boolean | string {
+    const { staffOnlyMsg } = getConfig(id);
+    return isAllowed(roles, id) ? true : staffOnlyMsg;
   }
 
   async run(message: CommandMessage, { naughtyMember, reason }: { naughtyMember: GuildMember, reason: string }):

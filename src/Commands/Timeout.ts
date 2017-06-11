@@ -1,7 +1,8 @@
 import { GuildMember, Message } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
 import { adminCheck, getModlogChannel, isAllowed } from "../Common";
-import { staffOnlyMsg, timeoutRoleName } from "../config";
+import getConfig from "../config";
+
 import Case from "../Utils/Case";
 
 // create 'dictionary' to save roles in
@@ -11,7 +12,7 @@ export class Timeout extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "timeout",
-      group: "ll-mod",
+      group: "mod",
       memberName: "timeout",
       description: "Removes all the roles of a given user and assigns \`silenced\` role.",
       examples: ["!timeout Jarrku#4768 <reason>", "!timeout @Jarrku <reason>", "!timeout Jarrku <reason>"],
@@ -33,13 +34,15 @@ export class Timeout extends Command {
     });
   }
 
-  hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member.roles) ? true : staffOnlyMsg;
+  hasPermission({ member: { roles }, guild: { id } }: CommandMessage): boolean | string {
+    const { staffOnlyMsg } = getConfig(id);
+    return isAllowed(roles, id) ? true : staffOnlyMsg;
   }
 
   async run(message: CommandMessage, { naughtyMember, reason }: { naughtyMember: GuildMember, reason: string }):
     Promise<Message | Message[]> {
     const { guild, member, createdAt } = message;
+    const { timeoutRoleName } = getConfig(guild.id);
 
     if (this.client.isOwner(naughtyMember)) {
       return message.say(`Do you think I'm going to timeout my master!? NEVER!!!`);
@@ -53,7 +56,7 @@ export class Timeout extends Command {
     modLogChannel.send({ embed: report });
 
     // save current roles of target member in cache ('user.id':['role1',..,'rolen'])
-    cache.set(naughtyMember.id, Array.from(naughtyMember.roles.keys()));
+    cache.set(guild.id + naughtyMember.id, Array.from(naughtyMember.roles.keys()));
     // create new array for new roles and add 'silenced' role to newly created array
     const timeoutRole = new Array<string>();
     timeoutRole.push(guild.roles.find((role) => role.name.toLowerCase() === timeoutRoleName).id);
@@ -73,7 +76,7 @@ export class Timein extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "timein",
-      group: "ll-mod",
+      group: "mod",
       aliases: ["untimeout"],
       memberName: "timein",
       description: "Readds all the roles of a given user and removes \`silenced\` role.",
@@ -90,9 +93,11 @@ export class Timein extends Command {
     });
   }
 
-  hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member.roles) ? true : staffOnlyMsg;
+  hasPermission({ member: { roles }, guild: { id } }: CommandMessage): boolean | string {
+    const { staffOnlyMsg } = getConfig(id);
+    return isAllowed(roles, id) ? true : staffOnlyMsg;
   }
+
   async run(message: CommandMessage, { naughtyMember }: { naughtyMember: GuildMember }):
     Promise<Message | Message[]> {
     const { guild, member, createdAt } = message;
@@ -101,7 +106,7 @@ export class Timein extends Command {
     const modLogChannel = getModlogChannel(guild);
     modLogChannel.send({ embed: report });
     // get old target members' roles from cache
-    const userRoles = cache.get(naughtyMember.id);
+    const userRoles = cache.get(guild.id + naughtyMember.id);
 
     // check if roles could be loaded
     if (!userRoles) return message.say("Roles not in cache anymore, do it yourself haHAA");

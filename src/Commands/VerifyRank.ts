@@ -1,11 +1,11 @@
 import { GuildMember, Message, Role, TextChannel, User } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
-import { notInRoleAssignmentError, roleAssignmentChannel } from "../config";
+import getConfig from "../config";
 import { fetchRank, servers } from "../Utils/RiotApi";
 import { addRoles } from "../Utils/RoleMutations";
 
 // runepage to check on;
-const runepageName = "littleleague";
+const runepageName = "checkmyrank";
 
 const toUpperCase = (value: string): string => value.toUpperCase();
 
@@ -13,10 +13,10 @@ export class VerifyRank extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "verify",
-      group: "ll",
+      group: "common",
       memberName: "verify",
       description: `Verifies your Soloq rank to get the appropriate tag on the server and \`Verified\` tag.`,
-      details: `Make sure one of your runepages is named \`littleleague\`!\nAvailable regions are: ${Object.keys(servers).join(", ")}`,
+      details: `Make sure one of your runepages is named \`${runepageName}\`!\nAvailable regions are: ${Object.keys(servers).join(", ")}`,
       examples: ["!verify euw Jarrku", "!verify na Dyrus"],
       args: [
         {
@@ -39,44 +39,21 @@ export class VerifyRank extends Command {
 
   async run(message: CommandMessage, { server, username }: { server: string, username: string }):
     Promise<Message | Message[]> {
-    if ((message.channel as TextChannel).name !== roleAssignmentChannel)
-      return message.author.send(notInRoleAssignmentError);
+
+    const { channel, guild, author, member } = message;
+    const { roleAssignmentChannel, notInRoleAssignmentError } = getConfig(guild.id);
+
+    if ((channel as TextChannel).name !== roleAssignmentChannel)
+      return author.send(notInRoleAssignmentError);
 
     const result = await fetchRank(server, username, runepageName);
-    const { guild, member } = message;
 
     // if string got returned = error -> return error msg
     if (typeof result === "string") return message.say(`:x:${member}, ${result}`);
     const { rank, tier } = result;
 
-    let roleString = "";
-    if (tier === "DIAMOND") {
-      switch (rank) {
-        case "I":
-          roleString = "Diamond 1"; break;
-        case "II":
-          roleString = "Diamond 2"; break;
-        case "III":
-          roleString = "Diamond 3"; break;
-        case "IV":
-          roleString = "Diamond 4"; break;
-        case "V":
-          roleString = "Diamond 5"; break;
-      }
-    } else if (tier === "PLATINUM") {
-      switch (rank) {
-        case "I":
-        case "II":
-          roleString = "Platinum 1-2"; break;
-        case "III":
-        case "IV":
-        case "V":
-          roleString = "Platinum 3-5"; break;
-      }
-    } else {
-      roleString = tier;
-    }
-    roleString += `, ${server}`;
+    const { getRolestring } = getConfig(guild.id);
+    const roleString = getRolestring(tier, server, rank);
 
     const rolechanges = addRoles(guild, member, roleString, true);
     if (typeof rolechanges === "string") return message.say(`This shouldnt happen :(, MASTERRRRR ${this.client.owners[0]}`);

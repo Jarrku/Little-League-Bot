@@ -1,14 +1,14 @@
 import { GuildMember, Message } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
 import { adminCheck, getModlogChannel, isAllowed } from "../Common";
-import { staffOnlyMsg } from "../config";
+import getConfig from "../config";
 import Case from "../Utils/Case";
 
 export class Warning extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: "warn",
-      group: "ll-mod",
+      group: "mod",
       memberName: "warn",
       description: "warns a user in mod-logs.",
       examples: ["!warn Jarrku#4768 <reason>", "!warn @Jarrku <reason>", "!warn Jarrku <reason>"],
@@ -30,8 +30,9 @@ export class Warning extends Command {
     });
   }
 
-  hasPermission({ member }: CommandMessage): boolean | string {
-    return isAllowed(member.roles) ? true : staffOnlyMsg;
+  hasPermission({ member: { roles }, guild: { id } }: CommandMessage): boolean | string {
+    const { staffOnlyMsg } = getConfig(id);
+    return isAllowed(roles, id) ? true : staffOnlyMsg;
   }
 
   async run(message: CommandMessage, { naughtyMember, reason }: { naughtyMember: GuildMember, reason: string }):
