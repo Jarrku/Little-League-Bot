@@ -39,7 +39,7 @@ export class Ban extends Command {
     const { guild, member, createdAt } = message;
 
     if (this.client.isOwner(naughtyMember)) {
-      return message.reply(`Do you think I'm going to ban my master!? NEVER!!!`);
+      return message.say(`Do you think I'm going to ban my master!? NEVER!!!`);
     }
 
     const checkResult = adminCheck(message, naughtyMember);
@@ -94,7 +94,7 @@ export class Permaban extends Command {
     const { guild, member, createdAt } = message;
 
     if (this.client.isOwner(naughtyMember)) {
-      return message.reply(`Do you think I'm going to permaban my master!? NEVER!!!`);
+      return message.say(`Do you think I'm going to permaban my master!? NEVER!!!`);
     }
 
     const checkResult = adminCheck(message, naughtyMember);

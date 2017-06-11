@@ -39,7 +39,7 @@ export class Warning extends Command {
     const { guild, member, createdAt } = message;
 
     if (this.client.isOwner(naughtyMember)) {
-      return message.reply(`Do you think I'm going to GIVE A WARNING to my master!? NEVER!!!`);
+      return message.say(`Do you think I'm going to GIVE A WARNING to my master!? NEVER!!!`);
     }
 
     const checkResult = adminCheck(message, naughtyMember);
