@@ -2,15 +2,8 @@ import { AssignableRoles, ConfigOptions } from "../config";
 
 const roles: AssignableRoles = {
   rank: [
-    "Challenger",
-    "Master",
-    "Diamond 1",
-    "Diamond 2",
-    "Diamond 3",
-    "Diamond 4",
-    "Diamond 5",
-    "Platinum 1-2",
-    "Platinum 3-5",
+    "Diamond +",
+    "Platinum",
     "Gold",
     "Silver",
     "Bronze",
@@ -18,26 +11,29 @@ const roles: AssignableRoles = {
   region: [
     "NA",
     "EUW",
+    "EUNE",
+    "OCE",
+    "BR",
+    "LAN",
+    "LAS",
+    "CN",
+    "KR",
+    "TR",
+    "GARENA",
   ],
   flavour: [
     "NLFG",
-    "Custom Games",
-    "CSGO",
-    "Overwatch",
-    "OSRS",
-    "Minecraft",
-    "Hearthstone",
-    "HOTS",
-    "PUBG",
-    "Workout",
-    "Sports",
+    "NPVS",
+    "Coach",
+    "Tournament",
+    "Top",
+    "Mid",
+    "Jungle",
+    "ADC",
+    "Support",
   ],
-  other: [
-    "silenced",
-    "test",
-  ],
+  other: [],
 };
-
 const helpText =
   `These all are the available roles, add and remove them with \`!+\` and \`!-\` (More info in the pinned message).
 ** __Rank__ **
