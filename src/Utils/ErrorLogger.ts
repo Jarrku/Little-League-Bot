@@ -13,7 +13,7 @@ export default (client: CommandoClient) => {
     .on("reconnecting", () => console.warn("Reconnecting..."))
     .on("commandError", (cmd, err) => {
       if (err instanceof FriendlyError) return;
-      console.error(`Error in command ${cmd.groupID}: ${cmd.memberName}, err`);
+      console.error(`Error in command ${cmd.groupID}: ${cmd.memberName}, ${err}`);
     })
     .on("commandBlocked", (msg, reason) => {
       console.log(`Command ${msg.command ?
