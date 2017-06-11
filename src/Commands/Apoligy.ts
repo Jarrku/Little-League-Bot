@@ -1,6 +1,5 @@
 import { Message, TextChannel } from "discord.js";
 import { Command, CommandMessage, CommandoClient } from "discord.js-commando";
-import roles from "../rolesData";
 
 export default class Rolelist extends Command {
   constructor(client: CommandoClient) {
@@ -22,7 +21,7 @@ export default class Rolelist extends Command {
     if (!generalChat) return;
 
     if (generalChat instanceof TextChannel) {
-      return generalChat.send("My master is sorry about being a naughty boy, can you give him a second chance? :c");
+      return generalChat.send("My master is sorry about being a naughty boy, can you give him a second chance? :c ");
     }
     return;
   }
